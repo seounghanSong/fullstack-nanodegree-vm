@@ -68,7 +68,10 @@ class WebServerHandler(BaseHTTPRequestHandler):
                     name = unicodedata.normalize('NFKD', restaurant.name).encode('ascii','ignore')
                     message += "<li>"
                     message += name
+                    message += "<ul><a href='/restaurants'>Edit</a></ul>"
+                    message += "<ul><a href='/restaurants'>Delete</a></ul>"
                     message += "</li>"
+                    message += "</br>"
                 message += "</bodt></html>"
                 self.wfile.write(message)
                 print(message)
