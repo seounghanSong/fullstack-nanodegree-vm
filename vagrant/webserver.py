@@ -66,9 +66,33 @@ class WebServerHandler(BaseHTTPRequestHandler):
             self.wfile.write(message)
             print(message)
             return
+        elif self.path.endswith("/edit"):
+            restaurantIDPath = self.path.split("/")[2]
+            myRestaurantQuery = session.query(Restaurant).filter_by(
+                    id=restaurantIDPath).one()
+            if myRestaurantQuery:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                message = ""
+                message += "<html><body>"
+                message += "<h1>"
+                message += myRestaurantQuery.name
+                message += "</h1>"
+                message += "<li>"
+                message += "<a href='/restaurants'> Go back </a>"
+                message += "</li>"
+                message += "<form method='POST' enctype='multipart/form-data' action='/restaurants/%s/edit'>" % restaurantIDPath
+                message += "<p>Name</p><input name='newRestaurantName' type='text' placeholder='%s'>" % myRestaurantQuery.name
+                message += "<input type='submit' value='Submit'>"
+                message += "</form>"
+                message += "</body></html>"
+                self.wfile.write(message)
+                print(message)
+
         elif self.path.endswith("/restaurants"):
             try:
-                restaurants = session.query(Restaurant.name).all()
+                restaurants = session.query(Restaurant.name, Restaurant.id).all()
             except:
                 print("Could not getting the names of restaurant from DB")
                 self.send_error(404, 'File Not Found: %s' % self.path)
@@ -84,9 +108,10 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 message += "</h2>"
                 for restaurant in restaurants:
                     name = unicodedata.normalize('NFKD', restaurant.name).encode('ascii','ignore')
+                    id = restaurant.id
                     message += "<li>"
                     message += name
-                    message += "<ul><a href='/restaurants'>Edit</a></ul>"
+                    message += "<ul><a href='/restaurants/{}/edit'>Edit</a></ul>".format(restaurant.id)
                     message += "<ul><a href='/restaurants'>Delete</a></ul>"
                     message += "</li>"
                     message += "</br>"
@@ -106,11 +131,15 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 self.headers.getheader('content-type'))
             if ctype == 'multipart/form-data':
                 fields = cgi.parse_multipart(self.rfile, pdict)
-                messageContent = fields.get('name')
+                messageContent = fields.get('newRestaurantName')
                 # Add Restaurant instance into DB
                 new_restaurant = Restaurant(name=messageContent[0])
-                session.add(new_restaurant)
-                session.commit()
+                try:
+                    session.query(Restaurant).update({"name": messageContent[0]})
+                    session.commit()
+                except:
+                    session.rollback()
+                    raise
                 message = ""
                 message += "<html><body>"
                 message += "<h2> Fill out the Name section </h2>"
