@@ -1,6 +1,27 @@
 #!/usr/bin/python
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
+import unicodedata
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from database_setup import Restaurant, Base, MenuItem
+
+engine = create_engine('sqlite:///restaurantmenu.db')
+# Bind the engine to the metadata of the Base class so that the
+# declaratives can be accessed through a DBSession instance
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)
+# A DBSession() instance establishes all conversations with the database
+# and represents a "staging zone" for all the objects loaded into the
+# database session object. Any change made against the objects in the
+# session won't be persisted into the database until you call
+# session.commit(). If you're not happy about the changes, you can
+# revert all of them back to the last commit by calling
+# session.rollback()
+session = DBSession()
 
 
 class WebServerHandler(BaseHTTPRequestHandler):
@@ -30,6 +51,28 @@ class WebServerHandler(BaseHTTPRequestHandler):
             self.wfile.write(message)
             print(message)
             return
+        elif self.path.endswith("/restaurant"):
+            try:
+                restaurants = session.query(Restaurant.name).all()
+            except:
+                print("Could not getting the names of restaurant from DB")
+                self.send_error(404, 'File Not Found: %s' % self.path)
+
+            if restaurants != None:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                message = ""
+                message += "<html><body>"
+                for restaurant in restaurants:
+                    name = unicodedata.normalize('NFKD', restaurant.name).encode('ascii','ignore')
+                    message += "<li>"
+                    message += name
+                    message += "</li>"
+                message += "</bodt></html>"
+                self.wfile.write(message)
+                print(message)
+                return
         else:
             self.send_error(404, 'File Not Found: %s' % self.path)
 
