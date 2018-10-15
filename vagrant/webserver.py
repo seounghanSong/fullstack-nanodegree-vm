@@ -51,7 +51,7 @@ class WebServerHandler(BaseHTTPRequestHandler):
             self.wfile.write(message)
             print(message)
             return
-        elif self.path.endswith("/restaurant"):
+        elif self.path.endswith("/restaurants"):
             try:
                 restaurants = session.query(Restaurant.name).all()
             except:
