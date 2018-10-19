@@ -17,7 +17,7 @@ item =  {'name':'Cheese Pizza','description':'made with fresh cheese','price':'$
 @app.route('/')
 @app.route('/restaurants/')
 def showRestaurants():
-    return render_template('restaurant.html')
+    return render_template('restaurant.html', restaurants = restaurants)
     # return('This page will show all my restaurants')
 
 @app.route('/restaurants/new')
@@ -27,18 +27,18 @@ def newRestaurant():
 
 @app.route('/restaurants/<int:restaurant_id>/edit')
 def editRestaurant(restaurant_id):
-    return render_template('editRestaurant.html')
+    return render_template('editRestaurant.html', restaurant = restaurant)
     # return("This page will be for editing restaurant %s" % restaurant_id)
 
 @app.route('/restaurants/<int:restaurant_id>/delete')
 def deleteRestaurant(restaurant_id):
-    return render_template('deleteRestaurant.html', restaurant_id = restaurant_id)
+    return render_template('deleteRestaurant.html', restaurant = restaurant)
     # return('This page will be for deleting restaurant %s' % restaurant_id)
 
 @app.route('/restaurants/<int:restaurant_id>/')
 @app.route('/restaurants/<int:restaurant_id>/menu/')
 def showMenu(restaurant_id):
-    return render_template('menu.html', restaurant_id = restaurant_id)
+    return render_template('menu.html', restaurant = restaurant, menus = items)
     # return('This page is the menu for restaurant %s' % restaurant_id)
 
 @app.route('/restaurants/<int:restaurant_id>/menu/new')
@@ -48,14 +48,14 @@ def newMenuItem(restaurant_id):
 
 @app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/edit')
 def editMenuItem(restaurant_id, menu_id):
-    return render_template('editMenuItem.html', restaurant_id = restaurant_id,
-        menu_id = menu_id)
+    return render_template('editMenuItem.html', restaurant = restaurant,
+        menu = item)
     # return('This page is for editing menu %s' % menu_id)
 
 @app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/delete')
 def deleteMenuItem(restaurant_id, menu_id):
-    return render_template('deleteMenuItem', restaurant_id = restaurant_id,
-        menu_id = menu_id)
+    return render_template('deleteMenuItem', restaurant = restaurant,
+        menu = item)
     # return('This page is for deleting menu %s' % menu_id)
 
 
