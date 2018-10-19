@@ -1,0 +1,57 @@
+<html>
+
+  <head>
+
+  </head>
+
+  <body>
+
+    <div class='pane'>
+
+      <!-- Header -->
+      <div class = 'header'>
+
+        <h1>
+          Restaurant Book
+          <i>
+            <sup>Beta</sup>
+          </i>
+        </h1>
+
+      </div>
+
+      <h3>
+        Register New Restaurant <a href="#"><b>here</b></a>
+      </h3>
+
+      <!-- Each Restaurant info container -->
+      <div>
+        {% for restaurant in restaurants %}
+          {% if restaurant %}
+            <li>
+              <strong>
+                {{restaurant.name}}
+              </strong>
+            </li>
+            <p></p>
+            <form action="#">
+                <input type="submit" value="edit" />
+            </form>
+            <form action="#">
+                <input type="submit" value="delete" />
+            </form>
+            {% else %}
+            <li>
+              <strong>
+                Be the first Restaurant Owner!!
+              </strong>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </body>
+
+</html>

@@ -1,0 +1,53 @@
+<html>
+
+  <head>
+
+  </head>
+
+  <body>
+
+    <div class='pane'>
+
+      <!-- Header -->
+      <div class = 'header'>
+
+        <h1>
+          {{restaurant.name}}
+          <i>
+            <sup>Beta</sup>
+          </i>
+        </h1>
+
+      </div>
+
+      <h3>
+        Register New Menu <a href="#"><b>here</b></a>
+      </h3>
+
+      <!-- Each Restaurant info container -->
+      <div>
+        {% for menu in menus %}
+          <li>
+            <strong>
+              {{menu.name}}
+            </strong>
+          </li>
+
+          <p>{{menu.description}}</p>
+          <p><i>{{menu.course}}</i></p>
+          <p><i>{{menu.price}}</i></p>
+
+          <form action="#">
+              <input type="submit" value="edit" />
+          </form>
+          <form action="#">
+              <input type="submit" value="delete" />
+          </form>
+        {% endfor %}
+      </div>
+
+    </div>
+
+  </body>
+
+</html>
