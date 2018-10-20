@@ -2,3 +2,6 @@ __pycache__
 *.pyc
 .vagrant
 restaurantmenu.db
+../.vagrant/
+../Vagrantfile
+restaurant.db
