@@ -34,10 +34,10 @@
               </strong>
             </li>
             <p></p>
-            <form action="#">
+            <form action="{{url_for('editRestaurant', restaurant_id=restaurant.id)}}">
                 <input type="submit" value="edit" />
             </form>
-            <form action="#">
+            <form action="{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}">
                 <input type="submit" value="delete" />
             </form>
             {% else %}

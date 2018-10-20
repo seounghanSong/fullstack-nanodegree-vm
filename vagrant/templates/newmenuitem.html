@@ -3,7 +3,7 @@
 
     <h1> Register Menu <s>In 5 second</s> </h1>
 
-    <form action="#" method = 'POST'>
+    <form action="{{url_for('newMenuItem', restaurant_id=restaurant.id)}}" method = 'POST'>
       <p>What's new for the spot?</p>
       <input type='text' size='30' name='name'>
       <input type='submit' value='Create'>
