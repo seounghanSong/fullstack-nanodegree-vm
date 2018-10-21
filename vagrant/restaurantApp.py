@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 
-engine  = create_engine('sqlite:///restaurantmenu.db')
+engine  = create_engine('sqlite:///restaurantmenu.db?check_same_thread=False')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -42,7 +42,7 @@ def newRestaurant():
         session.commit()
         # TODO: space for flash message
         restaurants = session.query(Restaurant).all()
-        return redirect(url_for('restaurant.html'), restaurants = restaurants)
+        return redirect(url_for('showRestaurants'))
     else:
         return render_template('newRestaurant.html')
     # return('This page will be for making a new restaurant')
@@ -55,10 +55,9 @@ def editRestaurant(restaurant_id):
         session.add(editRestaurant)
         session.commit()
         # TODO: space for flash message
-        restaurants = session.query(Restaurant).all()
-        return redirect(url_for('restaurant.html', restaurants = restaurants))
+        return redirect(url_for('showRestaurants'))
     else:
-        restaurant = session.query(Restaurant).filter_by(id = restaurant_id)
+        restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
         return render_template('editRestaurant.html', restaurant = restaurant)
     # return("This page will be for editing restaurant %s" % restaurant_id)
 
@@ -69,8 +68,7 @@ def deleteRestaurant(restaurant_id):
         session.delete(deleteRestaurant)
         session.commit()
         # TODO: space for flash message
-        restaurants = session.query(Restaurant).all()
-        return redirect(url_for('restaurant.html', restaurants = restaurants))
+        return redirect(url_for('showRestaurants'))
     else:
         restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
         return render_template('deleteRestaurant.html', restaurant = restaurant)
@@ -92,8 +90,7 @@ def newMenuItem(restaurant_id):
         session.add(newItem)
         session.commit()
         # TODO: space for flash message
-        restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-        return redirect(url_for('menu.html', restaurant = restaurant))
+        return redirect(url_for('showMenu', restaurant_id = restaurant_id))
     else:
         restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
         return render_template('newMenuItem.html', restaurant = restaurant)
@@ -108,9 +105,7 @@ def editMenuItem(restaurant_id, menu_id):
         session.add(editItem)
         session.commit()
         # TODO: space for flash message
-        restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-        items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
-        return redirect(url_for('menu.html', restaurant = restaurant, menus = items))
+        return redirect(url_for('showMenu', restaurant_id = restaurant_id))
     else:
         restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
         item = session.query(MenuItem).filter_by(id = menu_id).one()
@@ -125,9 +120,7 @@ def deleteMenuItem(restaurant_id, menu_id):
         session.delete(deleteItem)
         session.commit()
         # TODO: space for flash message
-        restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-        items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
-        return redirect(url_for('menu.html', restaurant = restaurant, menus = items))
+        return redirect(url_for('showMenu', restaurant_id = restaurant_id))
     else:
         restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
         item = session.query(MenuItem).filter_by(id = menu_id).one()
